@@ -59,10 +59,11 @@ describe('generateMagicLinkToken', () => {
 
 describe('sendMagicLinkEmail', () => {
   let mockSendMail: any;
+  let mockCreateTransport: any;
 
   beforeEach(() => {
     mockSendMail = vi.fn().mockResolvedValue({ messageId: 'mocked-message-id', envelope: { id: 'mocked-envelope-id' } }); // Mock sendMail to return a resolved promise
-    vi.spyOn(nodemailer, 'createTransport').mockReturnValue({
+    mockCreateTransport = vi.spyOn(nodemailer, 'createTransport').mockReturnValue({
       sendMail: mockSendMail,
     } as any); // Type assertion to bypass strict type checking for mock
   });
@@ -73,8 +74,15 @@ describe('sendMagicLinkEmail', () => {
   });
 
   it('constructs correct magic link URL', async () => {
-    // TODO: Implement test to check URL construction
-    expect(true).toBe(true); // Placeholder test
+    const email = 'test@example.com';
+    const token = 'test-token';
+    await sendMagicLinkEmail(email, token);
+
+    // Get the arguments passed to the mocked sendMail function
+    const sendMailArgs = mockSendMail.mock.calls[0][0];
+
+    // Assert that the constructed URL is present in the HTML body
+    expect(sendMailArgs.html).toContain(`http://localhost:3000/auth/magic-link/${token}`);
   });
 
   it('sends email with token', async () => { // Test case for sending email
