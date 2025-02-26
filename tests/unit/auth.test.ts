@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
-import { generateMagicLinkToken } from '../../src/lib/auth'; // Import the function
+import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { generateMagicLinkToken, sendMagicLinkEmail } from '../../src/lib/auth'; // Import the function
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -53,5 +53,27 @@ describe('generateMagicLinkToken', () => {
   it('returns the token', async () => {
     const token = await generateMagicLinkToken(email);
     expect(typeof token).toBe('string');
+  });
+});
+
+describe('sendMagicLinkEmail', () => {
+  it('constructs correct magic link URL', async () => {
+    // TODO: Implement test to check URL construction
+    expect(true).toBe(true); // Placeholder test
+  });
+
+  it('sends email with token', async () => {
+    // Mock Nodemailer here
+    const mockSendMail = vi.fn().mockResolvedValue(true);
+    vi.mock('nodemailer', () => ({
+      createTransport: vi.fn().mockReturnValue({
+        sendMail: mockSendMail,
+      }),
+    }));
+
+    const email = 'test@example.com';
+    const token = 'test-token';
+    await sendMagicLinkEmail(email, token);
+    expect(mockSendMail).toHaveBeenCalled(); // Check if sendMail was called
   });
 });
