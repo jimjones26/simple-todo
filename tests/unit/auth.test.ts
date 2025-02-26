@@ -1,6 +1,7 @@
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
+import { describe, it, expect, beforeAll, afterAll, vi, beforeEach, afterEach } from 'vitest';
 import { generateMagicLinkToken, sendMagicLinkEmail } from '../../src/lib/auth'; // Import the function
 import { PrismaClient } from '@prisma/client';
+import nodemailer from 'nodemailer';
 
 const prisma = new PrismaClient();
 
@@ -57,20 +58,26 @@ describe('generateMagicLinkToken', () => {
 });
 
 describe('sendMagicLinkEmail', () => {
+  let mockSendMail: any;
+
+  beforeEach(() => {
+    mockSendMail = vi.fn().mockResolvedValue({ messageId: 'mocked-message-id', envelope: { id: 'mocked-envelope-id' } }); // Mock sendMail to return a resolved promise
+    vi.spyOn(nodemailer, 'createTransport').mockReturnValue({
+      sendMail: mockSendMail,
+    } as any); // Type assertion to bypass strict type checking for mock
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    vi.restoreAllMocks(); // Restore original implementations after each test
+  });
+
   it('constructs correct magic link URL', async () => {
     // TODO: Implement test to check URL construction
     expect(true).toBe(true); // Placeholder test
   });
 
-  it('sends email with token', async () => {
-    // Mock Nodemailer here
-    const mockSendMail = vi.fn().mockResolvedValue(true);
-    vi.mock('nodemailer', () => ({
-      createTransport: vi.fn().mockReturnValue({
-        sendMail: mockSendMail,
-      }),
-    }));
-
+  it('sends email with token', async () => { // Test case for sending email
     const email = 'test@example.com';
     const token = 'test-token';
     await sendMagicLinkEmail(email, token);
