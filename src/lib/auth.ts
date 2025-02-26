@@ -17,7 +17,7 @@ export async function generateMagicLinkToken(email: string) {
   }
 
   await prisma.magicLinkToken.create({
-     { token, expiration, userId: user.id },
+    data: { token, expiration, userId: user.id },
   });
 
   return token;
