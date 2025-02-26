@@ -45,6 +45,7 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"@prisma/client": "^6.4.1"
+		"@prisma/client": "^6.4.1",
+		"nodemailer": "^6.10.0"
 	}
 }
