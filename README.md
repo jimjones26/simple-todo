@@ -1,38 +1,66 @@
-# sv
+# Simple Todo
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A SvelteKit task management application with magic link (passwordless) authentication using Prisma ORM and a SQLite database.
 
-## Creating a project
+## Tech Stack
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Framework**: Svelte 5 + SvelteKit
+- **Authentication**: Magic link / passwordless email flow using custom token model
+- **Database**: SQLite via Prisma ORM
+- **Forms**: sveltekit-superforms with Zod schema validation
+- **Email**: Nodemailer for magic link delivery
+- **UI**: Tailwind CSS v4, bits-ui components, tailwind-variants
+- **Testing**: Vitest (unit), Playwright (e2e)
+- **Language**: TypeScript
+
+## Key Features
+
+- Passwordless authentication via email magic link
+- Prisma-managed database schema with User and MagicLinkToken models
+- Type-safe form handling with sveltekit-superforms and Zod
+- Email verification request and "check your email" confirmation flow
+- Component-level unit tests and end-to-end test configuration
+
+## Getting Started
+
+**Prerequisites:** Node.js 18+, an SMTP provider for email delivery
 
 ```bash
-# create a new project in the current directory
-npx sv create
+# Clone the repository
+git clone https://github.com/jimjones26/simple-todo.git
+cd simple-todo
 
-# create a new project in my-app
-npx sv create my-app
+# Install dependencies
+npm install
+
+# Configure environment
+# Set DATABASE_URL and SMTP credentials in your environment
+DATABASE_URL="file:./dev.db"
+
+# Apply database schema
+npx prisma migrate dev
+
+# Generate Prisma client
+npx prisma generate
 ```
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Usage
 
 ```bash
+# Start the development server
 npm run dev
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+# Run unit tests
+npm run test:unit
 
-## Building
+# Run end-to-end tests
+npm run test:e2e
 
-To create a production version of your app:
-
-```bash
+# Build for production
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+## Database Schema
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- `User` — email address, optional first name, related magic link tokens
+- `MagicLinkToken` — unique token with expiration tied to a user
